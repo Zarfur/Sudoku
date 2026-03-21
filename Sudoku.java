@@ -45,6 +45,7 @@ public class Sudoku{
         // creates our board!
         Random rand = new Random();
         numberBank();
+        //int x =0; // for debug
         for(int square = 0; square < 9; square++){
             
             int sCol = (square%3) * 3;
@@ -53,21 +54,28 @@ public class Sudoku{
             for(int slot = 0; slot < 9; slot++){
                 // make an arraylist of valid numbers
                 // to chose from
-                int col = sCol + slot%3, row = sRow + slot/3;
+                int col = slot%3, row = slot/3;
+                col += sCol;
+                row += sRow;
                 ArrayList<Integer> isValid = new ArrayList<Integer>(9);
                 for(int numb : sqrs[square]){
                     if(cols[col].contains(numb) && rows[row].contains(numb)){
                         isValid.add(numb);
                     }
                 }
-                if(isValid.size() <= 0) isValid.add(-1);
+                //System.out.println("iteration " + x + ": " + isValid); x++;
+
+
+                //!!!!!!!!
+                // fix this fall-back tmrw, pls
+                if(isValid.size() <= 0) isValid.add(0);
                 int chosen = rand.nextInt(isValid.size());
-                int numb = sqrs[square].get(chosen);
+                int numb = isValid.get(chosen);
 
                 // remove the number from the square and board slots
                 // so it can not be used again for that specific
                 // row, column, and square
-                board[square][slot] = numb;
+                board[row][col] = numb;
                 cols[col].remove(Integer.valueOf(numb));
                 rows[row].remove(Integer.valueOf(numb));
                 sqrs[square].remove(Integer.valueOf(numb));
