@@ -16,6 +16,8 @@ public class Sudoku{
     public static ArrayList<Integer>[] rows = new ArrayList[9];
     public static ArrayList<Integer>[] sqrs = new ArrayList[9];
 
+    public static Random rand = new Random();
+
     public static void main(String[] args){
         boardSettup();
 
@@ -41,11 +43,11 @@ public class Sudoku{
         }
     }
 
-    public static void boardSettup(){
-        // creates our board!
-        Random rand = new Random();
+    public static void LEGACY_boardSettup(){
+        // OLD board creation without
+        // recursion / backtrack checking
         numberBank();
-        //int x =0; // for debug
+        int x = 0; // for debug
         for(int square = 0; square < 9; square++){
             
             int sCol = (square%3) * 3;
@@ -54,20 +56,17 @@ public class Sudoku{
             for(int slot = 0; slot < 9; slot++){
                 // make an arraylist of valid numbers
                 // to chose from
-                int col = slot%3, row = slot/3;
-                col += sCol;
-                row += sRow;
+                int col = slot%3 + sCol, row = slot/3 + sRow;
                 ArrayList<Integer> isValid = new ArrayList<Integer>(9);
                 for(int numb : sqrs[square]){
                     if(cols[col].contains(numb) && rows[row].contains(numb)){
                         isValid.add(numb);
                     }
                 }
-                //System.out.println("iteration " + x + ": " + isValid); x++;
+                System.out.println("iteration " + x + ": " + isValid); x++;
 
 
                 //!!!!!!!!
-                // fix this fall-back tmrw, pls
                 if(isValid.size() <= 0) isValid.add(0);
                 int chosen = rand.nextInt(isValid.size());
                 int numb = isValid.get(chosen);
@@ -82,12 +81,62 @@ public class Sudoku{
             }
         }
     }
+    // NEW BOARD SET UP
+    public static void boardSettup(){
+        // creates our board!
+        numberBank();
+        checkSlot(0, 0);
+    }
+
+    public static boolean checkSlot(int square, int slot){
+        // check if a slot is valid and then reccursively checks the
+        // next slots till board is full
+
+        // (DOES NOT WORK AS OF NOW--JUST USES LEGACY LOGIC WITH RECURSSION)
+        if(square > 8){
+            return true;
+        }
+        
+        int row = ((square / 3) * 3) + slot/3;
+        int col = ((square % 3) * 3) + slot%3;
+        ArrayList<Integer> isValid = new ArrayList<Integer>(9);
+        for(int numb : sqrs[square]){
+            if(cols[col].contains(numb) && rows[row].contains(numb)){
+                isValid.add(numb);
+            }
+        }
+
+        if(isValid.size()<=0){
+            isValid.add(0);
+        }
+
+        int chosen = rand.nextInt(isValid.size());
+        int numb = isValid.get(chosen);
+        // remove the number from the square and board slots
+        // so it can not be used again for that specific
+        // row, column, and square
+        board[row][col] = numb;
+        cols[col].remove(Integer.valueOf(numb));
+        rows[row].remove(Integer.valueOf(numb));
+        sqrs[square].remove(Integer.valueOf(numb));
+
+        int nextSqr = square, nextSlt = slot+1;
+        if(nextSlt==9){
+            nextSqr++;
+            nextSlt = 0;
+        }
+        // fix logic and make reversion logic later...
+        // nothing was working borooooororororo. 
+        // too tired for this :C
+        return checkSlot(nextSqr, nextSlt);
+
+    }
 
     public static void printBoard(){
         // prints our board
         for(int[] sqr : board){
             for(int i : sqr){
-                System.out.println(i);
+                System.out.print(i +" ");
             }
             System.out.println();
         }
