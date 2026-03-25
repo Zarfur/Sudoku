@@ -151,11 +151,15 @@ public class Sudoku{
 
     public static void printBoard(){
         // prints our board
-        for(int[] sqr : board){
-            for(int i : sqr){
-                System.out.print(i +" ");
+        System.out.print("+-------++-------++-------+");
+        for(int i = 0; i < board.length; i+=3){
+            for(int j = 0; j < board[i].length; j+=3){
+                if(j % 3 == 0) System.out.println("");
+                System.out.print("| " + board[i][j] + " " + board[i][j+1] + " " + board[i][j+2] + " |");
+                System.out.print("| " + board[i+1][j] + " " + board[i+1][j+1] + " " + board[i+1][j+2] + " |");
+                System.out.print("| " + board[i+2][j] + " " + board[i+2][j+1] + " " + board[i+2][j+2] + " |");
             }
-            System.out.println();
+            System.out.print("\n+-------++-------++-------+");
         }
     }
 
