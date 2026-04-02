@@ -1,41 +1,53 @@
 // my imports
-import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Random;
 
 public class Sudoku{
     // create the sudoku board;
-    public static int[][] board = {
+    private static int[][] board = {
         {-1, -1, -1, -1, -1, -1, -1, -1,-1}, {-1, -1, -1,-1, -1, -1, -1, -1, -1}, {-1, -1, -1,-1, -1, -1, -1, -1, -1},
         {-1, -1, -1, -1, -1, -1, -1, -1,-1}, {-1, -1, -1,-1, -1, -1, -1, -1, -1}, {-1, -1, -1,-1, -1, -1, -1, -1, -1},
         {-1, -1, -1, -1, -1, -1, -1, -1,-1}, {-1, -1, -1,-1, -1, -1, -1, -1, -1}, {-1, -1, -1,-1, -1, -1, -1, -1, -1},
     };
+    // create base board for refrence in scramble
+    private static int[][] base = {
+        {-1, -1, -1, -1, -1, -1, -1, -1,-1}, {-1, -1, -1,-1, -1, -1, -1, -1, -1}, {-1, -1, -1,-1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1,-1}, {-1, -1, -1,-1, -1, -1, -1, -1, -1}, {-1, -1, -1,-1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1,-1}, {-1, -1, -1,-1, -1, -1, -1, -1, -1}, {-1, -1, -1,-1, -1, -1, -1, -1, -1},
+    };
+    // create scrambled board
+    private static int[][] scrambled = {
+        {-1, -1, -1, -1, -1, -1, -1, -1,-1}, {-1, -1, -1,-1, -1, -1, -1, -1, -1}, {-1, -1, -1,-1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1,-1}, {-1, -1, -1,-1, -1, -1, -1, -1, -1}, {-1, -1, -1,-1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1,-1}, {-1, -1, -1,-1, -1, -1, -1, -1, -1}, {-1, -1, -1,-1, -1, -1, -1, -1, -1},
+    };
+
     // Make sure there is no duplicates by using a ALOT of arraylists
-    public static ArrayList<Integer>[] cols = new ArrayList[9];
-    public static ArrayList<Integer>[] rows = new ArrayList[9];
-    public static ArrayList<Integer>[] sqrs = new ArrayList[9];
+    private static ArrayList<ArrayList<Integer>> cols = new ArrayList<ArrayList<Integer>>(9);
+    private static ArrayList<ArrayList<Integer>> rows = new ArrayList<ArrayList<Integer>>(9);
+    private static ArrayList<ArrayList<Integer>> sqrs = new ArrayList<ArrayList<Integer>>(9);
 
     public static Random rand = new Random();
 
-    public static void main(String[] args){
+    public Sudoku(){
         boardSettup();
-        printBoard();
     }
+    
 
     // methods
     public static void numberBank(){
         // creates a number bank for us to use to make sure there are
         // no dupes! 
         for(int i = 0; i < 9; i++){
-            cols[i] = new ArrayList<Integer>(9);
-            rows[i] = new ArrayList<Integer>(9);
-            sqrs[i] = new ArrayList<Integer>(9);
+            cols.add(new ArrayList<Integer>(9));
+            rows.add(new ArrayList<Integer>(9));
+            sqrs.add(new ArrayList<Integer>(9));
         }
         for(int i = 0; i < 9; i++){
             for(int j = 1; j < 10; j++){
-                cols[i].add(j);
-                rows[i].add(j);
-                sqrs[i].add(j);
+                cols.get(i).add(j);
+                rows.get(i).add(j);
+                sqrs.get(i).add(j);
             }
         }
     }
@@ -43,7 +55,7 @@ public class Sudoku{
     // Below is my PREVIOUS boardSettup method
     // it does NOT work... But I used a lot of
     // logic from it to make my working algorithm
-    public static void LEGACY_boardSettup(){
+    private static void LEGACY_boardSettup(){
         // OLD board creation without
         // recursion / backtrack checking
         numberBank();
@@ -58,8 +70,8 @@ public class Sudoku{
                 // to chose from
                 int col = slot%3 + sCol, row = slot/3 + sRow;
                 ArrayList<Integer> isValid = new ArrayList<Integer>(9);
-                for(int numb : sqrs[square]){
-                    if(cols[col].contains(numb) && rows[row].contains(numb)){
+                for(int numb : sqrs.get(square)){
+                    if(cols.get(col).contains(numb) && rows.get(row).contains(numb)){
                         isValid.add(numb);
                     }
                 }
@@ -79,36 +91,34 @@ public class Sudoku{
                 // so it can not be used again for that specific
                 // row, column, and square
                 board[row][col] = numb;
-                cols[col].remove(Integer.valueOf(numb));
-                rows[row].remove(Integer.valueOf(numb));
-                sqrs[square].remove(Integer.valueOf(numb));
+                cols.get(col).remove(Integer.valueOf(numb));
+                rows.get(row).remove(Integer.valueOf(numb));
+                sqrs.get(square).remove(Integer.valueOf(numb));
             }
         }
     }
 
     // NEW BOARD SET UP
-    public static void boardSettup(){
+    private static void boardSettup(){
         // creates our board!
         numberBank();
         checkSlot(0, 0);
     }
 
-    public static boolean checkSlot(int square, int slot){
+    private static boolean checkSlot(int square, int slot){
         // check if a slot is valid and then reccursively checks the
         // next slots till board is full
 
         //  base case
-        if(square > 8){
-            return true;
-        }
+        if(square > 8) return true;
         
         // check which numbers are valid along with
         // the correct coordinates for each slot per square
         int row = ((square / 3) * 3) + slot/3;
         int col = ((square % 3) * 3) + slot%3;
         ArrayList<Integer> isValid = new ArrayList<Integer>(9);
-        for(int numb : sqrs[square]){
-            if(cols[col].contains(numb) && rows[row].contains(numb)){
+        for(int numb : sqrs.get(square)){
+            if(cols.get(col).contains(numb) && rows.get(row).contains(numb)){
                 isValid.add(numb);
             }
         }
@@ -123,9 +133,9 @@ public class Sudoku{
             // so it can not be used again for that specific
             // row, column, and square
             board[row][col] = numb;
-            cols[col].remove(Integer.valueOf(numb));
-            rows[row].remove(Integer.valueOf(numb));
-            sqrs[square].remove(Integer.valueOf(numb));
+            cols.get(col).remove(Integer.valueOf(numb));
+            rows.get(row).remove(Integer.valueOf(numb));
+            sqrs.get(square).remove(Integer.valueOf(numb));
 
             // check next slot 
             int nextSqr = square, nextSlt = slot+1;
@@ -141,26 +151,73 @@ public class Sudoku{
             // revert change if the number selection
             // leads to invalid number
             board[row][col] = -1;
-            cols[col].add(numb);
-            rows[row].add(numb);
-            sqrs[square].add(numb);
+            cols.get(col).add(numb);
+            rows.get(row).add(numb);
+            sqrs.get(square).add(numb);
         }
 
         return false;
     }
 
-    public static void printBoard(){
+    public void printBoard(int isScrambled){
+        int[][] arr = base;
+        if(isScrambled == 1) arr = scrambled;
+        if(isScrambled == 2) arr = board;
         // prints our board
         System.out.print("+-------++-------++-------+");
-        for(int i = 0; i < board.length; i+=3){
-            for(int j = 0; j < board[i].length; j+=3){
+        for(int i = 0; i < arr.length; i+=3){
+            for(int j = 0; j < arr[i].length; j+=3){
                 if(j % 3 == 0) System.out.println("");
-                System.out.print("| " + board[i][j] + " " + board[i][j+1] + " " + board[i][j+2] + " |");
-                System.out.print("| " + board[i+1][j] + " " + board[i+1][j+1] + " " + board[i+1][j+2] + " |");
-                System.out.print("| " + board[i+2][j] + " " + board[i+2][j+1] + " " + board[i+2][j+2] + " |");
+                System.out.print("| " + arr[i][j] + " " + arr[i][j+1] + " " + arr[i][j+2] + " |");
+                System.out.print("| " + arr[i+1][j] + " " + arr[i+1][j+1] + " " + arr[i+1][j+2] + " |");
+                System.out.print("| " + arr[i+2][j] + " " + arr[i+2][j+1] + " " + arr[i+2][j+2] + " |");
             }
             System.out.print("\n+-------++-------++-------+");
         }
+    }
+
+    public void scramble(int difficulty){
+        int x = 0;
+        switch(difficulty){
+            case 1: x = 3; break;
+            case 2: x = 2; break;
+            case 3: x = 1; break;
+        }
+        for(int i = 0; i < board.length; i++){
+            for(int j = 0; j < board[i].length; j++){
+                // scrambles the board by randomly taking
+                // numbers from the solved board
+                if(rand.nextInt(4) < x){
+                    scrambled[i][j] = board[i][j];
+                    base[i][j] = board[i][j];
+                }else{
+                    scrambled[i][j] = 0;
+                    base[i][j] = 0;
+                }
+            }
+        }
+    }
+
+    public boolean checkWin(){
+        // check if the scrambled board is equal to
+        // the solved board
+        for(int i = 0; i < board.length; i++){
+            for(int j = 0; j < board[i].length; j++){
+                if(scrambled[i][j] != board[i][j]) return false;
+            }
+        }
+        return true;
+    }
+
+    // getters
+    public int[][] getBoard(){
+        return board;
+    }
+    public int[][] getScrambled(){
+        return scrambled;
+    }
+    public int[][] getBase(){
+        return base;
     }
 
 }
