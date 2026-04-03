@@ -52,52 +52,6 @@ public class Sudoku{
         }
     }
 
-    // Below is my PREVIOUS boardSettup method
-    // it does NOT work... But I used a lot of
-    // logic from it to make my working algorithm
-    private static void LEGACY_boardSettup(){
-        // OLD board creation without
-        // recursion / backtrack checking
-        numberBank();
-        int x = 0; // for debug
-        for(int square = 0; square < 9; square++){
-            
-            int sCol = (square%3) * 3;
-            int sRow = (square/3) * 3;
-            
-            for(int slot = 0; slot < 9; slot++){
-                // make an arraylist of valid numbers
-                // to chose from
-                int col = slot%3 + sCol, row = slot/3 + sRow;
-                ArrayList<Integer> isValid = new ArrayList<Integer>(9);
-                for(int numb : sqrs.get(square)){
-                    if(cols.get(col).contains(numb) && rows.get(row).contains(numb)){
-                        isValid.add(numb);
-                    }
-                }
-                System.out.println("iteration " + x + ": " + isValid); x++;
-
-
-                // fall-back error quick fix that led to the
-                // realization that i needed to use a different
-                // strategy...
-                if(isValid.size() <= 0) isValid.add(0);
-
-
-                int chosen = rand.nextInt(isValid.size());
-                int numb = isValid.get(chosen);
-
-                // remove the number from the square and board slots
-                // so it can not be used again for that specific
-                // row, column, and square
-                board[row][col] = numb;
-                cols.get(col).remove(Integer.valueOf(numb));
-                rows.get(row).remove(Integer.valueOf(numb));
-                sqrs.get(square).remove(Integer.valueOf(numb));
-            }
-        }
-    }
-
     // NEW BOARD SET UP
     private static void boardSettup(){
         // creates our board!
@@ -160,6 +114,7 @@ public class Sudoku{
     }
 
     public void printBoard(int isScrambled){
+        // checks which board to print based on input
         int[][] arr = base;
         if(isScrambled == 1) arr = scrambled;
         if(isScrambled == 2) arr = board;
@@ -177,6 +132,7 @@ public class Sudoku{
     }
 
     public void scramble(int difficulty){
+        // harder difficulty = more empty slots
         int x = 0;
         switch(difficulty){
             case 1: x = 3; break;
@@ -220,4 +176,51 @@ public class Sudoku{
         return base;
     }
 
+//------------------------------------------------------------------------------------
+    // Below is my PREVIOUS boardSettup method
+    // it does NOT work... But I used a lot of
+    // logic from it to make my working algorithm
+    private static void LEGACY_boardSettup(){
+        // OLD board creation without
+        // recursion / backtrack checking
+        numberBank();
+        int x = 0; // for debug
+        for(int square = 0; square < 9; square++){
+            
+            int sCol = (square%3) * 3;
+            int sRow = (square/3) * 3;
+            
+            for(int slot = 0; slot < 9; slot++){
+                // make an arraylist of valid numbers
+                // to chose from
+                int col = slot%3 + sCol, row = slot/3 + sRow;
+                ArrayList<Integer> isValid = new ArrayList<Integer>(9);
+                for(int numb : sqrs.get(square)){
+                    if(cols.get(col).contains(numb) && rows.get(row).contains(numb)){
+                        isValid.add(numb);
+                    }
+                }
+                System.out.println("iteration " + x + ": " + isValid); x++;
+
+
+                // fall-back error quick fix that led to the
+                // realization that i needed to use a different
+                // strategy...
+                if(isValid.size() <= 0) isValid.add(0);
+
+
+                int chosen = rand.nextInt(isValid.size());
+                int numb = isValid.get(chosen);
+
+                // remove the number from the square and board slots
+                // so it can not be used again for that specific
+                // row, column, and square
+                board[row][col] = numb;
+                cols.get(col).remove(Integer.valueOf(numb));
+                rows.get(row).remove(Integer.valueOf(numb));
+                sqrs.get(square).remove(Integer.valueOf(numb));
+            }
+        }
+    }
+    
 }
