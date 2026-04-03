@@ -41,9 +41,12 @@ public class Game{
             System.out.println("\nHere is the current board: ");
             game.printBoard(1);
             // check game win
-            if(game.checkWin()) break;
+            if(game.checkWin()){
+                System.out.println("You won sudoku!");
+                break;
+            }
         }
 
-        System.out.println("You won sudoku!");
+       
     }
 }
