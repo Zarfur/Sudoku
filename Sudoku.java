@@ -77,11 +77,12 @@ public class Sudoku{
             }
         }
 
-        for(int i : isValid){
+        for(int i =0; i < isValid.size();i++){
             // randomly checks possible branches of
             // isValid
             int chosen = rand.nextInt(isValid.size());
             int numb = isValid.get(chosen);
+            isValid.remove(chosen);
             
             // remove the number from the square and board slots
             // so it can not be used again for that specific
@@ -108,6 +109,7 @@ public class Sudoku{
             cols.get(col).add(numb);
             rows.get(row).add(numb);
             sqrs.get(square).add(numb);
+            isValid.add(numb);
         }
 
         return false;
