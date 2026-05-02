@@ -116,21 +116,20 @@ public class Sudoku{
     }
 
     public void printBoard(int isScrambled){
-        // checks which board to print based on input
         int[][] arr = base;
         if(isScrambled == 1) arr = scrambled;
         if(isScrambled == 2) arr = board;
-        // prints our board
-        System.out.print("+-------++-------++-------+");
-        for(int i = 0; i < arr.length; i+=3){
-            for(int j = 0; j < arr[i].length; j+=3){
-                if(j % 3 == 0) System.out.println("");
-                System.out.print("| " + arr[i][j] + " " + arr[i][j+1] + " " + arr[i][j+2] + " |");
-                System.out.print("| " + arr[i+1][j] + " " + arr[i+1][j+1] + " " + arr[i+1][j+2] + " |");
-                System.out.print("| " + arr[i+2][j] + " " + arr[i+2][j+1] + " " + arr[i+2][j+2] + " |");
-            }
-            System.out.print("\n+-------++-------++-------+");
+
+        System.out.println("+-------++-------++-------+");
+        for(int i = 0; i < 9; i++){
+            System.out.print("| ");
+            for(int j = 0; j < 9; j++){
+                System.out.print(arr[i][j] + " ");
+                if(j == 2 || j == 5) System.out.print("|| ");  }
+            System.out.println("|");
+            if(i == 2 || i == 5) System.out.println("+-------++-------++-------+");
         }
+        System.out.println("+-------++-------++-------+");
     }
 
     public void scramble(int difficulty){
